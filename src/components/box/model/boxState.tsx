@@ -1,15 +1,24 @@
-import { makeAutoObservable } from "mobx/src/internal.js";
+import { makeAutoObservable, runInAction } from "mobx/src/internal.js";
+import type { boxColorType } from "../types";
 
 export class BoxState {
-  positionX: number = 0;
-  positionY: number = 0;
-  constructor(x: number, y: number) {
-    this.positionX = x;
-    this.positionY = y;
+  color: boxColorType;
+  isTransition: boolean = false;
+  constructor(color: boxColorType) {
+    this.color = color;
     makeAutoObservable(this, {}, { autoBind: true });
   }
-  setPosition(x: number, y: number) {
-    this.positionX = x;
-    this.positionY = y;
+
+  activeteTransition() {
+    this.isTransition = true;
+
+    setTimeout(() => {
+      runInAction(() => {
+        this.isTransition = false;
+      });
+    }, 500);
+  }
+  setColor(color: boxColorType) {
+    this.color = color;
   }
 }

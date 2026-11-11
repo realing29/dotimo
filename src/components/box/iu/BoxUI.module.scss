@@ -13,3 +13,12 @@
 .red {
   background: red;
 }
+
+.transition {
+  transition: transform var(--transition-time);
+}
+
+.active {
+  border: 3px solid black;
+  z-index: 1;
+}

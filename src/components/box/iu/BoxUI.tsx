@@ -1,39 +1,61 @@
+import type { PointerEventHandler } from "react";
 import {
   BOX_SIZE,
   DEFAULT_COLOR,
   DEFAULT_POSITION_X,
   DEFAULT_POSITION_Y,
+  TIME_TRANSITION_MS,
 } from "../const";
-import cls from "./Box.module.scss";
+import type { boxColorType } from "../types";
+import cls from "./BoxUI.module.scss";
 import cn from "classnames";
 
 type Props = {
   id?: string;
   positionX: number;
   positionY: number;
-  handlePointerDown: React.PointerEventHandler<HTMLDivElement> | undefined;
+  isTransition: boolean;
+  isActive: boolean;
+  handlePointerDown: PointerEventHandler<HTMLDivElement>;
+  onSimpleClick: () => void;
 
-  color?: "yellow" | "green" | "red";
+  color?: boxColorType;
 };
+let lastCoors: { x: number; y: number } = { x: 0, y: 0 };
 
 export const BoxUI = ({
   id,
   color = DEFAULT_COLOR,
   positionX = DEFAULT_POSITION_X,
   positionY = DEFAULT_POSITION_Y,
+  isTransition = false,
+  isActive,
   handlePointerDown,
+  onSimpleClick,
 }: Props) => {
   return (
     <div
       id={id}
-      className={cn(cls.root, cls[color])}
+      className={cn(cls.root, cls[color as string], {
+        [cls.transition]: isTransition,
+        [cls.active]: isActive,
+      })}
       style={{
         width: BOX_SIZE,
         height: BOX_SIZE,
-        transform: `translate(${positionX}px, ${positionY}px)`,
+        transform: `translate(var(--x, ${positionX}px), var(--y, ${positionY}px))`,
+        "--transition-time": TIME_TRANSITION_MS,
       }}
       onPointerDown={handlePointerDown}
       onDrag={() => false}
+      onMouseDown={(e) => {
+        lastCoors.x = e.clientX;
+        lastCoors.y = e.clientY;
+      }}
+      onMouseUp={(e) => {
+        if (lastCoors.x === e.clientX && lastCoors.y === e.clientY)
+          onSimpleClick();
+      }}
     />
   );
 };

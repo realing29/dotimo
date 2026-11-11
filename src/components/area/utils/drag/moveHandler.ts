@@ -1,13 +1,12 @@
-import { box1State } from "../../../box/Box1/model/box1State";
-import { box2State } from "../../../box/Box2/model/box2State";
 import { BOX_SIZE } from "../../../box/const";
-import type { BoxState } from "../../../box/model/boxState";
+import type { box1IdType, box2IdType } from "../../../box/types";
+import { getSecondBoxId } from "../../../box/utils/getSecondBoxId";
+import { setPosition } from "../../../box/utils/setPosition";
 import { AREA_SIZE } from "../../const";
 import { dragState } from "./dragState";
+import type { UniversalMouseEvent } from "../../../../types";
 
-export const moveHandler: React.PointerEventHandler<HTMLDivElement> = (
-  event,
-) => {
+export const moveHandler: (e: UniversalMouseEvent) => void = (event) => {
   // Вычисление координат перемещения внутри поля
   const container = document.querySelector("#area") as HTMLElement;
 
@@ -48,10 +47,9 @@ export const moveHandler: React.PointerEventHandler<HTMLDivElement> = (
 
   const secondBox = getSecondBoxNode(dragState.idItemDragable);
 
-  const [boxState, secondBoxState] = getBoxesStates(dragState.idItemDragable);
-
-  if (!secondBox || !boxState) return;
-  boxState.setPosition(left, top);
+  if (!secondBox) return;
+  // boxState.setPosition(left, top);
+  setPosition(dragState.idItemDragable, left, top);
 
   const isOffsetDefined =
     dragState.secondBlockLeftOffset !== 0 ||
@@ -63,7 +61,6 @@ export const moveHandler: React.PointerEventHandler<HTMLDivElement> = (
 
   const abs_X = Math.abs(left - second_X);
   const abs_Y = Math.abs(top - second_Y);
-  // console.log(abs_X, abs_Y);
 
   const isStuck = abs_X < BOX_SIZE && abs_Y < BOX_SIZE;
 
@@ -71,7 +68,6 @@ export const moveHandler: React.PointerEventHandler<HTMLDivElement> = (
     const secondLeftOffset = second_X - left;
     const secondTopOffset = second_Y - top;
 
-    console.log(secondLeftOffset, secondTopOffset);
     dragState.setSecondBlockOffset(secondLeftOffset, secondTopOffset);
     dragState.setTogether(true);
   }
@@ -79,29 +75,10 @@ export const moveHandler: React.PointerEventHandler<HTMLDivElement> = (
   if (dragState.isTogether && isOffsetDefined) {
     const secondLeft = left + dragState.secondBlockLeftOffset;
     const secondTop = top + dragState.secondBlockTopOffset;
-    secondBoxState?.setPosition(secondLeft, secondTop);
+    setPosition(dragState.idItemSecond, secondLeft, secondTop);
   }
-
-  // console.log(left, second_X, top, second_Y);
 };
 
-function getBoxesStates(idItemDrogable: string) {
-  let boxState: BoxState | null = null;
-  let secondBoxState: BoxState | null = null;
-  if (idItemDrogable === "b1") {
-    boxState = box1State;
-    secondBoxState = box2State;
-  } else if (idItemDrogable === "b2") {
-    boxState = box2State;
-    secondBoxState = box1State;
-  }
-  return [boxState, secondBoxState];
-}
-
-function getSecondBoxNode(idItemDrogable: string) {
-  if (idItemDrogable === "b1") {
-    return document.querySelector("#b2");
-  } else if (idItemDrogable === "b2") {
-    return document.querySelector("#b1");
-  }
+function getSecondBoxNode(idItemDrogable: box1IdType | box2IdType) {
+  return document.querySelector(`#${getSecondBoxId(idItemDrogable)}`);
 }

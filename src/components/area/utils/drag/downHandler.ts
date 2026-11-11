@@ -2,10 +2,10 @@ import { runInAction } from "mobx/src/internal.js";
 import { dragState } from "./dragState";
 import { upHandler } from "./upHandler";
 import { moveHandler } from "./moveHandler";
+import { BOX_1_ID, BOX_2_ID } from "../../../box/const";
+import type { PointerEventHandler } from "react";
 
-export const downHandler: React.PointerEventHandler<HTMLDivElement> = (
-  event,
-) => {
+export const downHandler: PointerEventHandler<HTMLDivElement> = (event) => {
   const dragItem = event.target as HTMLElement;
 
   const itemRect = dragItem.getBoundingClientRect();
@@ -15,7 +15,7 @@ export const downHandler: React.PointerEventHandler<HTMLDivElement> = (
 
   runInAction(() => {
     dragState.setShift(shiftX, shiftY);
-    if (dragItem.id === "b1" || dragItem.id === "b2") {
+    if (dragItem.id === BOX_1_ID || dragItem.id === BOX_2_ID) {
       dragState.setIdDragable(dragItem.id);
     }
   });

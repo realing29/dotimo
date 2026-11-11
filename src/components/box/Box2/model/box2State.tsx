@@ -1,3 +1,4 @@
+import { BoxColors } from "../../const";
 import { BoxState } from "../../model/boxState";
 
-export const box2State = new BoxState(500, 350);
+export const box2State = new BoxState(BoxColors.YELLOW);

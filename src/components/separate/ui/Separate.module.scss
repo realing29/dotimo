@@ -1,0 +1,11 @@
+.root {
+  margin-top: 20px;
+  border: 1px solid #add8e6;
+  border-radius: 4px;
+  padding: 4px 8px;
+  background: #add8e6;
+  font-size: 14px;
+  &:hover {
+    background: #b7e2f2;
+  }
+}
